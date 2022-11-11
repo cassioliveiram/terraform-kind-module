@@ -1,10 +1,3 @@
-provider "kind" {
-}
-
-provider "kubernetes" {
-  config_path = pathexpand(var.kind_cluster_config_path)
-}
-
 resource "kind_cluster" "default" {
   name            = var.kind_cluster_name
   kubeconfig_path = pathexpand(var.kind_cluster_config_path)
@@ -23,18 +16,98 @@ resource "kind_cluster" "default" {
       extra_port_mappings {
         container_port = 80
         host_port      = 80
+        protocol       = "tcp"
       }
+
       extra_port_mappings {
         container_port = 443
         host_port      = 443
+        protocol       = "tcp"
+      }
+
+      extra_port_mappings {
+        container_port = 8080
+        host_port      = 8080
+        protocol       = "tcp"
       }
     }
 
     node {
-      role = "worker-1"
+      role = "worker"
     }
     node {
-      role = "worker-2"
+      role = "worker"
     }
-  }
 }
+}
+
+# resource "kubernetes_deployment" "meudeployment" {
+#   depends_on = [kind_cluster.default]
+#   metadata {
+#     name = "terraform-example-2"
+#     labels = {
+#       app = "giropops"
+#     }
+#   }
+
+#   spec {
+#     replicas = 3
+
+#     selector {
+#       match_labels = {
+#         app = "giropops"
+#       }
+#     }
+
+#     template {
+#       metadata {
+#         labels = {
+#           app = "giropops"
+#         }
+#       }
+
+#       spec {
+#         container {
+#           image = "k8s.gcr.io/echoserver:1.4"
+#           name  = "docker-linuxtips"
+
+#           resources {
+#             limits = {
+#               cpu    = "1"
+#               memory = "512Mi"
+#             }
+#             requests = {
+#               cpu    = "0.1"
+#               memory = "64Mi"
+#             }
+#           }
+#           port {
+#             container_port = 8080
+#           }          
+#         }
+#       }
+#     }
+#   }
+# }
+
+# resource "kubernetes_service" "service" {
+#   depends_on = [kind_cluster.default]
+#   metadata {
+#     name = "giropops"
+#   }
+#   spec {
+#     selector = {
+#       app = "giropops"
+#     }
+#     session_affinity = "ClientIP"
+#     port {
+#       port        = 8080
+#       protocol    = "TCP"
+#       name        = "http"
+#       target_port = 8080
+#       node_port   = 30000
+#     }
+
+#     type = "NodePort"
+#   }
+# }

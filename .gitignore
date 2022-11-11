@@ -1,4 +1,5 @@
 #gitignore files
 
 .idea
-.tfstate
+.tfstate*
+.terraform*

@@ -1,9 +1,3 @@
-variable "kind_cluster_name" {
-  type        = string
-  description = "Cluster Name"
-  default     = "moreira-kind-cluster"
-}
-
 variable "kind_cluster_config_path" {
   type        = string
   description = "local config"

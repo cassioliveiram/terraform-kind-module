@@ -1,9 +1,3 @@
-provider "helm" {
-  kubernetes {
-    config_path = pathexpand(var.kind_cluster_config_path)
-  }
-}
-
 resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -14,8 +8,6 @@ resource "helm_release" "ingress_nginx" {
   create_namespace = true
 
   values = [file("nginx-ingress-values.yaml")]
-
-  depends_on = [kind_cluster.default]
 }
 
 resource "null_resource" "wait_for_ingress_nginx" {
